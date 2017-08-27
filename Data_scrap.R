@@ -1,4 +1,4 @@
-path <- 'C:/Users/ss0088/Dropbox (RRI at WVU)/Shishir/ELG/Australia Electricity/data/'
+path <- 'C:/Users/ss0088/data/' #Create the working directory, Make sure the working directory folder has no other files.
 setwd(path)
 
 auto_install <- function(pkg){
