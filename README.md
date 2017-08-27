@@ -6,6 +6,6 @@ Cite as:
 
 Shishir Shakya. (2017, August 27). R Script to Download the Historical Data of Aggregated Price and Demand of National Electricity Market of Australia. Zenodo. http://doi.org/10.5281/zenodo.851555
 
-To download as BibTeX, CSL, DataCite, Dublin Core, JSON, MARCXML and Mendeley [click the link](https://zenodo.org/record/851555/export/hx#.WaMC0z6GNaR)
+To export as BibTeX, CSL, DataCite, Dublin Core, JSON, MARCXML and Mendeley, click the link [here](https://zenodo.org/record/851555/export/hx#.WaMC0z6GNaR).
 
 [![DOI](https://zenodo.org/badge/101568426.svg)](https://zenodo.org/badge/latestdoi/101568426)
