@@ -6,9 +6,9 @@
 # Shishir Shakya. (2017, August 27). R Script to Download the Historical Data of Aggregated Price and Demand of National Electricity Market of Australia. Zenodo. http://doi.org/10.5281/zenodo.851555
 # 
 # To export as BibTeX, CSL, DataCite, Dublin Core, JSON, MARCXML and Mendeley, click the link [here](https://zenodo.org/record/851555/export/hx#.WaMC0z6GNaR).
-                                                                                                 
-path <- 'C:/Users/ss0088/data/' #Create the working directory, Make sure the working directory folder has no other files.
-setwd(path)
+
+rm(list = ls())
+dev.off(dev.list()["RStudioGD"])
 
 auto_install <- function(pkg){
   new.pkg <- pkg[!(pkg %in% installed.packages()[, 'Package'])]
@@ -17,12 +17,19 @@ auto_install <- function(pkg){
   sapply(pkg, require, character.only = TRUE)
 }
 
-packages <- c('stringr', 'R.utils')
+packages <- c('stringr', 'R.utils', 'rstudioapi', 'reshape2')
 auto_install(packages)
+
+
+path <- dirname(rstudioapi::getActiveDocumentContext()$path)
+setwd(path)
+
+dir.create("rawdata")
+
 
 #Set up for loop
 state <- c('QLD1','NSW1', 'VIC1', 'TAS1', 'SA1')
-year <- 1998:2017
+year <- 1998:2019
 mon <- 1:12
 mon <- stringr::str_pad(mon, 2, pad = "0")
 
@@ -31,28 +38,28 @@ for(i in year){
   for(j in mon){
     for(k in state){
       tryCatch({
-
-      download.file(paste('https://www.aemo.com.au/aemo/data/nem/priceanddemand/PRICE_AND_DEMAND_',i, j, '_',k, '.csv', sep=''),
-                    destfile = paste("PRICE_AND_DEMAND_", i, j, '_', k, '.csv', sep=""), mode="wb")
-
-      }, error=function(e){})
-
-    }
-  }
-}
-
-#Updater for year 2017, as 
-for(j in mon){
-    for(k in state){
-      tryCatch({
         
-        download.file(paste('https://www.aemo.com.au/aemo/data/nem/priceanddemand/PRICE_AND_DEMAND_',2017, j, '_',k, '.csv', sep=''),
-                      destfile = paste("PRICE_AND_DEMAND_", 2017, j, '_', k, '.csv', sep=""), mode="wb")
+        download.file(paste('https://www.aemo.com.au/aemo/data/nem/priceanddemand/PRICE_AND_DEMAND_',i, j, '_',k, '.csv', sep=''),
+                      destfile = paste("rawdata/PRICE_AND_DEMAND_", i, j, '_', k, '.csv', sep=""), mode="wb")
         
       }, error=function(e){})
       
     }
+  }
 }
+
+# #Update for year 2017, as 
+# for(j in mon){
+#   for(k in state){
+#     tryCatch({
+#       
+#       download.file(paste('https://www.aemo.com.au/aemo/data/nem/priceanddemand/PRICE_AND_DEMAND_',2017, j, '_',k, '.csv', sep=''),
+#                     destfile = paste("PRICE_AND_DEMAND_", 2017, j, '_', k, '.csv', sep=""), mode="wb")
+#       
+#     }, error=function(e){})
+#     
+#   }
+# }
 
 # Delete the 0kb files
 lapply(Filter(function(x) countLines(x)==0, list.files(pattern='.csv')), unlink) #it uses R.utils package
@@ -63,13 +70,10 @@ df <- lapply(fileList, read.csv)
 df <- do.call(rbind.data.frame, df)
 colnames(df) <- tolower(colnames(df))
 
-library(reshape2)
+
 names(df)
 price <- dcast(df, settlementdate ~ region, value.var="rrp")
 demand <- dcast(df, settlementdate ~ region, value.var="totaldemand")
 
-
-setwd('..')
-getwd()
 write.csv(price, 'price.csv')
 write.csv(price, 'demand.csv')
